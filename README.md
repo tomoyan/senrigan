@@ -22,8 +22,54 @@ Senrigan operates on a **Client-Server-Agent** architecture:
 
 ---
 
-## 📦 Implementation Guide
+## 📦 Getting Started (Local Development)
 
-### 1. Start the Senrigan Dashboard
+### 1. Run Senrigan Locally
+
+Senrigan is set up as a monorepo. To run the Visualizer Dashboard and Collector Server locally:
+
 ```bash
-npx senrigan-ui --port 9000
+# Install dependencies for all workspaces
+npm install
+
+# Start the CLI and Dashboard in development mode
+npm run dev
+```
+
+The Dashboard and the Collector WebSocket Server will bind together, serving over port `9000`.
+- **Dashboard UI**: `http://localhost:9000`
+- **Collector WebSocket**: `ws://localhost:9000`
+
+### 2. Use the App (Node.js SDK Integration)
+
+To visualize your app's code pathway, install the Senrigan Node.js SDK and connect it to your app. For example, in an Express server:
+
+```bash
+npm install @senrigan/sdk-node
+```
+
+Initialize it, then trigger pulses whenever a specific block of your code executes:
+
+```javascript
+const express = require('express');
+const senrigan = require('@senrigan/sdk-node');
+
+// 1. Initialize connection to the local Collector
+senrigan.init({ url: 'ws://localhost:9000' });
+
+const app = express();
+
+// 2. Send a pulse when specific code executes
+app.use((req, res, next) => {
+  senrigan.pulse({
+    file: 'src/index.js',
+    functionName: 'middleware:logger',
+    metadata: { method: req.method, path: req.path } // Optional context
+  });
+  next();
+});
+
+app.listen(3000, () => console.log('App connected to Senrigan!'));
+```
+
+Check out `examples/demo-app/` for a fully working example demonstrating how to instrument an Express application!
