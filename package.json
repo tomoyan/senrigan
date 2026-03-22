@@ -1,0 +1,18 @@
+{
+  "name": "senrigan-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The Universal Code Movement Visualizer",
+  "scripts": {
+    "start": "npm run start --workspace=packages/cli",
+    "dev:dashboard": "npm run dev --workspace=packages/dashboard",
+    "dev:cli": "npm run dev --workspace=packages/cli",
+    "dev": "npm run dev:cli"
+  },
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
+  "author": "",
+  "license": "ISC"
+}

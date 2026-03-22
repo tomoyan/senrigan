@@ -1,0 +1,16 @@
+{
+  "name": "senrigan-cli",
+  "version": "1.0.0",
+  "description": "Collector Server for Senrigan Visualizer",
+  "bin": {
+    "senrigan-ui": "./bin/senrigan.js"
+  },
+  "scripts": {
+    "start": "node bin/senrigan.js",
+    "dev": "node --watch bin/senrigan.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "ws": "^8.16.0"
+  }
+}

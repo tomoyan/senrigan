@@ -1,0 +1,12 @@
+{
+  "name": "@senrigan/sdk-node",
+  "version": "1.0.0",
+  "description": "Node.js Agent for Senrigan Visualizer",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "ws": "^8.16.0"
+  }
+}
