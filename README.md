@@ -67,15 +67,21 @@ npm install @senrigan/sdk-node
 *(If you are using Python, Go, or another language, Senrigan is fully language-agnostic! Because the server uses standard WebSockets, you can simply write a tiny WebSocket client in your language of choice to connect to `ws://localhost:9000` and beam JSON `pulse` payloads!)*
 
 ### 3. Connect and Pulse
-You need to do two things in your project's code: Connect when your app boots up, and "Pulse" when your code executes.
+You need to do two things in your project: Connect when your app boots up, and "Pulse" when your code executes.
 
-**A. Connect:** Put the `init` connection at the very top of your project's main starting file (like `index.js`, `server.js`, `app.js`, or whichever file starts your app):
+**A. Connect:** The cleanest way to connect is using Node's Preload Module flag (`--require`). This injects Senrigan without ever modifying your app's main file!
+
+1. Create a `senrigan.js` file in your root directory (and add it to `.gitignore`!):
 ```javascript
 const senrigan = require('@senrigan/sdk-node');
-
 // Connect to the standalone Senrigan server running in the background
 senrigan.init({ url: 'ws://localhost:9000' });
 ```
+2. Start your app with the `-r` flag to preload the connection:
+```bash
+node -r ./senrigan.js src/index.js # (or whatever your entry file is)
+```
+*(Alternatively, you can just paste the `senrigan.init()` code directly at the very top of your `index.js` file if you prefer).*
 
 **B. Pulse:** Sprinkle the `pulse` command deep inside your functions, endpoints, or critical logic blocks. Whenever that code runs, it fires a signal over to your Terminal log!
 ```javascript
