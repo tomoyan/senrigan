@@ -8,17 +8,18 @@ Senrigan is a language-agnostic tool designed to visualize the execution flow of
 ## 🚀 How It Works
 Senrigan operates on a **Client-Server-Agent** architecture:
 
-1.  **The Agent (SDK):** A lightweight library you drop into your existing code (Node.js, Python, Go, etc.). It sends a "Pulse" (a tiny UDP or WebSocket packet) whenever a specific block of code is executed.
+1.  **The Agent (SDK):** A lightweight library you drop into your existing code. It sends a "Pulse" (a tiny WebSocket packet) whenever a specific block of code is executed. It automatically captures your caller file and line numbers natively!
 2.  **The Collector (Server):** A centralized Node.js server that listens for Pulses from any number of Agents.
-3.  **The Visualizer (Dashboard):** A React-based web interface that maps your project's file structure and animates the "Movement" of code execution as glowing pulses between nodes.
+3.  **The Visualizer (Dashboard):** A React-based split-screen web interface. On the left, it seamlessly embeds your working web application. On the right, it prints a sleek **Live Execution Log** detailing exact file line hits and JSON payload arguments in real-time as you click around your app.
 
 ---
 
 ## 🛠️ Core Features
-* **Real-time Visualization:** Watch the "lightning" travel from your Frontend to your Backend and into your Database.
-* **Language Agnostic:** Use the same dashboard for your React frontend, Express API, and Python microservices.
-* **Zero-Config Mapping:** The dashboard automatically builds a "Map" of your project based on the file paths reported by the Agents.
-* **Minimal Overhead:** Designed to send fire-and-forget signals so it doesn't slow down your application logic.
+* **Split-Screen Workflow:** Interact with your fully-functional web app while simultaneously monitoring the backend code firing side-by-side.
+* **Terminal Execution Log:** A fast, easily readable terminal interface that logs function sequences rather than cluttered node graphs.
+* **Automatic Stack Tracing:** The SDK natively hooks into the V8 Engine stack to grab exact `[file:line]` pathways without you needing to hardcode them!
+* **Rich Metadata:** Pass deeply nested JSON objects from your app state straight into the Pulse and watch them render brightly on the dashboard terminal.
+* **Language Agnostic:** Built to accept signals from any language over WebSocket.
 
 ---
 
@@ -59,12 +60,12 @@ senrigan.init({ url: 'ws://localhost:9000' });
 
 const app = express();
 
-// 2. Send a pulse when specific code executes
+// 2. Send a pulse when specific code executes!
+// Note: 'file' and 'line' are completely optional! Senrigan extracts them natively.
 app.use((req, res, next) => {
   senrigan.pulse({
-    file: 'src/index.js',
     functionName: 'middleware:logger',
-    metadata: { method: req.method, path: req.path } // Optional context
+    metadata: { method: req.method, path: req.path } // Automatically serialized in the terminal!
   });
   next();
 });

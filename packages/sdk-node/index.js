@@ -38,9 +38,33 @@ function connect() {
   });
 }
 
-function pulse({ file, functionName, line, metadata = {} }) {
+function pulse(options = {}) {
+  let { file, functionName, line, metadata = {} } = options;
+  
+  // Auto-capture stack trace for file and line if omitted
+  if (!file || !line) {
+    const stackLines = new Error().stack.split('\n');
+    if (stackLines.length >= 3) {
+      const callerLine = stackLines[2]; // 0 is Error, 1 is pulse(), 2 is caller
+      // match formats like `at function (path:line:col)` or `at path:line:col`
+      const match = callerLine.match(/\((.*):(\d+):(\d+)\)/) || callerLine.match(/at\s+(.*):(\d+):(\d+)/);
+      if (match) {
+        if (!file) {
+          file = match[1];
+          // attempt to make it relative to cwd
+          if (process.cwd && file.includes(process.cwd())) {
+            const path = require('path');
+            file = file.replace(process.cwd() + path.sep, '').replace(process.cwd() + '/', '');
+            file = file.replace(/\\/g, '/'); // normalize backslashes
+          }
+        }
+        if (!line) line = match[2];
+      }
+    }
+  }
+
   const payload = {
-    file,
+    file: file || 'unknown',
     functionName,
     line,
     metadata,

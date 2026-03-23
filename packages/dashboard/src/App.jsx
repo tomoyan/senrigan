@@ -53,7 +53,7 @@ function App() {
     <>
       <div className="header">
         <Eye size={28} color="var(--accent-cyan)" />
-        <h1>Senrigan Visualizer</h1>
+        <h1>Senrigan</h1>
         
         <form onSubmit={handleUrlSubmit} style={{ display: 'flex', alignItems: 'center', marginLeft: '24px', gap: '8px' }}>
           <input 
@@ -104,6 +104,12 @@ function App() {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-dark)' }}>
           <div style={{ padding: '8px 16px', borderBottom: '1px solid rgba(0,0,0,0.1)', backgroundColor: 'var(--bg-panel)', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 500, fontSize: '12px', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
             <Terminal size={14} /> Live Execution Log
+            <button 
+              onClick={() => setLogs([])}
+              style={{ marginLeft: 'auto', background: 'transparent', border: '1px solid rgba(0,0,0,0.2)', borderRadius: '4px', cursor: 'pointer', fontSize: '11px', padding: '2px 8px', color: 'var(--text-secondary)' }}
+            >
+              Clear
+            </button>
           </div>
           <div style={{ flex: 1, overflowY: 'auto', padding: '16px', fontFamily: 'SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace', fontSize: '13px', lineHeight: 1.6 }}>
             {logs.length === 0 && (
@@ -111,19 +117,28 @@ function App() {
                 Waiting for the first execution pulse...
               </div>
             )}
-            {logs.map((log, i) => (
-              <div key={i} style={{ display: 'flex', gap: '12px', wordBreak: 'break-all', marginBottom: '4px' }}>
-                <span style={{ color: 'var(--text-secondary)', minWidth: '65px' }}>
-                  {new Date(log.timestamp).toLocaleTimeString([], { hour12: false })}
-                </span>
-                <span style={{ color: 'var(--accent-cyan)' }}>
-                  [{log.file}]
-                </span>
-                <span style={{ color: 'var(--accent-purple)' }}>
-                  {log.functionName || 'File execution'}
-                </span>
+            {logs.map((log, i) => {
+              const hasMetadata = log.metadata && Object.keys(log.metadata).length > 0;
+              return (
+              <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '4px', wordBreak: 'break-all', marginBottom: '8px' }}>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <span style={{ color: 'var(--text-secondary)', minWidth: '65px' }}>
+                    {new Date(log.timestamp).toLocaleTimeString([], { hour12: false })}
+                  </span>
+                  <span style={{ color: 'var(--accent-cyan)' }}>
+                    [{log.file}{log.line ? `:${log.line}` : ''}]
+                  </span>
+                  <span style={{ color: 'var(--accent-purple)' }}>
+                    {log.functionName || 'File execution'}
+                  </span>
+                </div>
+                {hasMetadata && (
+                  <div style={{ color: 'var(--text-primary)', opacity: 0.8, paddingLeft: '77px' }}>
+                    <span style={{ color: 'var(--text-secondary)' }}>↳</span> {JSON.stringify(log.metadata)}
+                  </div>
+                )}
               </div>
-            ))}
+            )})}
             <div ref={logEndRef} />
           </div>
         </div>
