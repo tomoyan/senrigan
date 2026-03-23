@@ -71,7 +71,7 @@ You need to do two things in your project: Connect when your app boots up, and "
 
 **A. Connect:** The cleanest way to connect is using Node's Preload Module flag (`--require`). This injects Senrigan without ever modifying your app's main file!
 
-1. Create a `senrigan.js` file in your root directory (and add it to `.gitignore`!):
+1. **Copy the `senrigan.js` file** out of the `examples/demo-app/` folder and place it directly into your own project's root directory (or just create a file manually with the following code). Don't forget to add it to your `.gitignore`!
 ```javascript
 const senrigan = require('@senrigan/sdk-node');
 // Connect to the standalone Senrigan server running in the background
