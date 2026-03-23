@@ -45,36 +45,51 @@ The Dashboard and the Collector WebSocket Server will bind together, serving ove
 - **Dashboard UI**: `http://localhost:9000`
 - **Collector WebSocket**: `ws://localhost:9000`
 
-### 2. Use the App (Node.js SDK Integration)
+## 🔌 Using Senrigan With Any Other Project
 
-To visualize your app's code pathway, install the Senrigan Node.js SDK and connect it to your app. For example, in an Express server:
+Senrigan operates as a completely independent, standalone server. You do **not** need to copy or place the Senrigan repository inside your actual project folder! 
 
+Here is the simple 3-step process to visualize **any** project:
+
+### 1. Start Senrigan (The Server)
+Keep the `senrigan` folder anywhere on your computer. Open it and run the dev script. This spins up the Dashboard UI and the background data listener.
 ```bash
+# Inside the standalone senrigan folder
+npm run dev
+```
+
+### 2. Install the SDK
+Head over to your own project's folder. If you are using Node.js, install the official SDK:
+```bash
+# Inside your actual project folder
 npm install @senrigan/sdk-node
 ```
+*(If you are using Python, Go, or another language, Senrigan is fully language-agnostic! Because the server uses standard WebSockets, you can simply write a tiny WebSocket client in your language of choice to connect to `ws://localhost:9000` and beam JSON `pulse` payloads!)*
 
-Initialize it, then trigger pulses whenever a specific block of your code executes:
+### 3. Connect and Pulse
+You need to do two things in your project's code: Connect when your app boots up, and "Pulse" when your code executes.
 
+**A. Connect:** Put the `init` connection at the very top of your project's main starting file (like `index.js`, `server.js`, `app.js`, or whichever file starts your app):
 ```javascript
-const express = require('express');
 const senrigan = require('@senrigan/sdk-node');
 
-// 1. Initialize connection to the local Collector
+// Connect to the standalone Senrigan server running in the background
 senrigan.init({ url: 'ws://localhost:9000' });
-
-const app = express();
-
-// 2. Send a pulse when specific code executes!
-// Note: 'file' and 'line' are completely optional! Senrigan extracts them natively.
-app.use((req, res, next) => {
-  senrigan.pulse({
-    functionName: 'middleware:logger',
-    metadata: { method: req.method, path: req.path } // Automatically serialized in the terminal!
-  });
-  next();
-});
-
-app.listen(3000, () => console.log('App connected to Senrigan!'));
 ```
 
-Check out `examples/demo-app/` for a fully working example demonstrating how to instrument an Express application!
+**B. Pulse:** Sprinkle the `pulse` command deep inside your functions, endpoints, or critical logic blocks. Whenever that code runs, it fires a signal over to your Terminal log!
+```javascript
+app.get('/users/profile', (req, res) => {
+  
+  // Send the signal! (The exact file path and line number are automatically captured!)
+  senrigan.pulse({
+    functionName: 'fetchUserProfile',
+    metadata: { userId: req.query.id } // Automatically serialized in the Dashboard
+  });
+
+  const user = db.getUser(req.query.id);
+  res.json(user);
+});
+```
+
+Check out `examples/demo-app/` for a fully working example demonstrating how to easily instrument an application!
