@@ -25,6 +25,10 @@ Senrigan operates on a **Client-Server-Agent** architecture:
 
 ## 📦 Getting Started (Local Development)
 
+### Prerequisites
+- **Node.js**: Version 18.0 or higher is recommended (required for modern Vite builds used in the dashboard).
+- **Package Manager**: npm (to manage the monorepo workspaces and handle standard installations).
+
 ### 1. Run Senrigan Locally
 
 Senrigan is set up as a monorepo. To run the Visualizer Dashboard and Collector Server locally:
