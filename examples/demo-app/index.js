@@ -3,8 +3,6 @@ const senrigan = require('@senrigan/sdk-node');
 const routes = require('./routes');
 const path = require('path');
 
-// Initialize Senrigan to connect to the local Collector
-senrigan.init({ url: 'ws://localhost:9000' });
 
 const app = express();
 app.use(express.json());

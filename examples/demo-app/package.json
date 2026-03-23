@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node index.js",
-    "dev": "node --watch index.js"
+    "start": "node -r ./senrigan.js index.js",
+    "dev": "node --watch -r ./senrigan.js index.js"
   },
   "dependencies": {
     "express": "^4.19.2",
